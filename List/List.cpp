@@ -266,11 +266,6 @@ int main()
     linked_list<Obj>* l1 = new linked_list<Obj>();
     Obj* obj1 = new Obj(1, "Object1");
     l1->add_end(obj1);
-    Obj* obj2 = new Obj(2, "Object2");
-    l1->add_end(obj2);
-    Obj* obj3 = new Obj(3, "Object3");
-    l1->add_end(obj3);
-    l1->Clear();
     delete obj1;
     return 0;
 }
