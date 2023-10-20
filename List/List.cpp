@@ -49,6 +49,8 @@ public:
             Tail2 = Tail2->next;
             object = &Tail2->value;
         }
+        Tail2 = nullptr;
+        delete Tail2;
         return object;
     }
     void Get(Obj* obj);
@@ -209,6 +211,8 @@ bool linked_list<T>::Search_and_delete(Obj* obj)
             return true;
         }
     }
+    Tail2 = nullptr;
+    delete Tail2;
     return false;
 }
 
@@ -246,6 +250,8 @@ void linked_list<T>::Add_Position(Obj* obj, int index)
         }
         node->value = *obj;
         ++this->Size;
+        Tail2 = nullptr;
+        delete Tail2;
     }
 }
 
@@ -287,11 +293,6 @@ int main()
     linked_list<Obj>* l1 = new linked_list<Obj>();
     Obj* obj1 = new Obj(1, "Object1");
     l1->add_end(obj1);
-    Obj* obj2 = new Obj(2, "Object2");
-    l1->add_end(obj2);
-    Obj* obj3 = new Obj(3, "Object3");
-    l1->add_end(obj3);
-    l1->To_String();
     delete obj1;
     return 0;
 }
