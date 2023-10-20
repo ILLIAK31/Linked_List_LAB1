@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <string>
+#include <sstream>
 
 class Obj
 {
@@ -57,6 +58,7 @@ public:
     bool Search_and_delete(Obj* obj);
     void Add_Position(Obj* obj, int index);
     void Clear();
+    void To_String();
 };
 
 template <class T>
@@ -261,11 +263,35 @@ void linked_list<T>::Clear()
     this->Size = NULL;
 }
 
+template<class T>
+void linked_list<T>::To_String()
+{
+    std::cout << "\tList\n";
+    std::cout << "\t| Address : " << this << " | Size : " << this->Size << " |\n" << "\t| Objects |\n";
+    int i = 1;
+    Node<T>* Tail2 = this->Tail;
+    while (Tail2 != nullptr)
+    {
+        Obj* obj = static_cast<T*>(&Tail2->value);
+        std::cout<<"\t| Object "<<i++<<" | Address of object : "<<Tail2<<" | Previous : "<<Tail2->prev<<" | Next : "<<Tail2->next<<" | (Value) Num : "<<obj->num<<" | (Value) Text : "<<obj->text<<" |\n";
+        Tail2 = Tail2->next;
+        obj = nullptr;
+        delete obj;
+    }
+    Tail2 = nullptr;
+    delete Tail2;
+}
+
 int main()
 {
     linked_list<Obj>* l1 = new linked_list<Obj>();
     Obj* obj1 = new Obj(1, "Object1");
     l1->add_end(obj1);
+    Obj* obj2 = new Obj(2, "Object2");
+    l1->add_end(obj2);
+    Obj* obj3 = new Obj(3, "Object3");
+    l1->add_end(obj3);
+    l1->To_String();
     delete obj1;
     return 0;
 }
