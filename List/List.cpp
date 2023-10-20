@@ -196,14 +196,27 @@ bool linked_list<T>::Search_and_delete(Obj* obj)
     {
         if (Compare((*this)[index], obj))
         {
-            if (this->Size != 1)
+            if (this->Size != 1 && index != 0 && index != this->Size-1)
             {
                 Tail2->prev->next = Tail2->next;
                 Tail2->next->prev = Tail2->prev;
                 Tail2->prev = Tail2->next = nullptr;
             }
+            else if (this->Size != 1 && index == 0)
+            {
+                this->Tail = this->Tail->next;
+                Tail2->next->prev = nullptr;
+                Tail2->next = nullptr;
+            }
+            else if (this->Size != 1 && index == this->Size - 1)
+            {
+                this->Head = this->Head->prev;
+                Tail2->prev->next = nullptr;
+                Tail2->prev = nullptr;
+            }
             else
             {
+                delete Tail;
                 this->Tail = this->Head = nullptr;
             }
             delete Tail2;
@@ -310,7 +323,7 @@ int main()
         }
         clock_t timer2 = clock();
         l1->To_String();
-        std::cout << "| Timer 1 : " << timer1 << " | Timer 2 : " << timer2 << " |\n";
+        std::cout << "| Timer : " << (timer2-timer1)*CLOCKS_PER_SEC << " |\n";
         const int m = 3; //pow(10, 4);
         timer1 = clock();
         for (int l = 0; l < m; ++l)
@@ -325,7 +338,7 @@ int main()
         }
         timer2 = clock();
         l1->To_String();
-        std::cout << "| Timer 1 : " << timer1 << " | Timer 2 : " << timer2 << " |\n";
+        std::cout << "| Timer : " << (timer2 - timer1)*CLOCKS_PER_SEC << " |\n";
         l1->Clear();
     }
     delete l1;
