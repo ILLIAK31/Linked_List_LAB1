@@ -291,7 +291,7 @@ void linked_list<T>::To_String()
 
 int main()
 {
-    const int Obj_Max = 5;
+    const int Obj_Max = 1; //5
     int Num{ 0 };
     std::string Text;
     linked_list<Obj>* l1 = new linked_list<Obj>();
@@ -311,7 +311,7 @@ int main()
         clock_t timer2 = clock();
         l1->To_String();
         std::cout << "| Timer 1 : " << timer1 << " | Timer 2 : " << timer2 << " |\n";
-        const int m = pow(10, 4);
+        const int m = 3; //pow(10, 4);
         timer1 = clock();
         for (int l = 0; l < m; ++l)
         {
