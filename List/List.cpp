@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <string>
 #include <sstream>
+#include <time.h>
 
 class Obj
 {
@@ -290,9 +291,43 @@ void linked_list<T>::To_String()
 
 int main()
 {
+    const int Obj_Max = 5;
+    int Num{ 0 };
+    std::string Text;
     linked_list<Obj>* l1 = new linked_list<Obj>();
-    Obj* obj1 = new Obj(1, "Object1");
-    l1->add_end(obj1);
-    delete obj1;
+    for (int i = 1; i <= Obj_Max; ++i)
+    {
+        const int n = pow(10, i);
+        clock_t timer1 = clock();
+        for (int j = 0; j < n; ++j)
+        {
+            std::cout << "Give data for object\nNum : ";
+            std::cin >> Num;
+            std::cout << "Text : ";
+            std::cin >> Text;
+            Obj* obj = new Obj(Num, Text);
+            l1->add_end(obj);
+        }
+        clock_t timer2 = clock();
+        l1->To_String();
+        std::cout << "| Timer 1 : " << timer1 << " | Timer 2 : " << timer2 << " |\n";
+        const int m = pow(10, 4);
+        timer1 = clock();
+        for (int l = 0; l < m; ++l)
+        {
+            std::cout << "Give random data to find object by your data\nNum : ";
+            std::cin >> Num;
+            std::cout << "Text : ";
+            std::cin >> Text;
+            Obj* obj = new Obj(Num, Text);
+            l1->Search_and_delete(obj);
+            delete obj;
+        }
+        timer2 = clock();
+        l1->To_String();
+        std::cout << "| Timer 1 : " << timer1 << " | Timer 2 : " << timer2 << " |\n";
+        l1->Clear();
+    }
+    delete l1;
     return 0;
 }
