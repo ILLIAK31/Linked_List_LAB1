@@ -304,43 +304,49 @@ void linked_list<T>::To_String()
 
 int main()
 {
-    const int Obj_Max = 1; //5
     int Num{ 0 };
     std::string Text;
     linked_list<Obj>* l1 = new linked_list<Obj>();
-    for (int i = 1; i <= Obj_Max; ++i)
+    const int n1 = 10;
+    clock_t timer1 = clock();
+    for (int i = 0; i < n1; ++i)
     {
-        const int n = pow(10, i);
-        clock_t timer1 = clock();
-        for (int j = 0; j < n; ++j)
-        {
-            std::cout << "Give data for object\nNum : ";
-            std::cin >> Num;
-            std::cout << "Text : ";
-            std::cin >> Text;
-            Obj* obj = new Obj(Num, Text);
-            l1->add_end(obj);
-        }
-        clock_t timer2 = clock();
-        l1->To_String();
-        std::cout << "| Timer : " << (timer2-timer1)*CLOCKS_PER_SEC << " |\n";
-        const int m = 3; //pow(10, 4);
-        timer1 = clock();
-        for (int l = 0; l < m; ++l)
-        {
-            std::cout << "Give random data to find object by your data\nNum : ";
-            std::cin >> Num;
-            std::cout << "Text : ";
-            std::cin >> Text;
-            Obj* obj = new Obj(Num, Text);
-            l1->Search_and_delete(obj);
-            delete obj;
-        }
-        timer2 = clock();
-        l1->To_String();
-        std::cout << "| Timer : " << (timer2 - timer1)*CLOCKS_PER_SEC << " |\n";
-        l1->Clear();
+        std::cout << "Give data for object\nNum : ";
+        std::cin >> Num;
+        std::cout << "Text : ";
+        std::cin >> Text;
+        Obj* obj = new Obj(Num, Text);
+        clock_t timer3 = clock();
+        l1->add_end(obj);
+        clock_t timer4 = clock();
+        double time1 = (timer4 - timer3) / (double)CLOCKS_PER_SEC;
+        std::cout << "| Time for one object : " << time1 << std::endl;
     }
+    clock_t timer2 = clock();
+    l1->To_String();
+    double time1 = (timer2 - timer1) / (double)CLOCKS_PER_SEC;
+    std::cout << "| Full time : " << time1 << " |\n";
+    const int n2 = 5;
+    timer1 = clock();
+    for (int j = 0; j < n2; ++j)
+    {
+        std::cout << "Give random data to find object by your data\nNum : ";
+        std::cin >> Num;
+        std::cout << "Text : ";
+        std::cin >> Text;
+        Obj* obj = new Obj(Num, Text);
+        clock_t timer3 = clock();
+        l1->Search_and_delete(obj);
+        clock_t timer4 = clock();
+        delete obj;
+        double time2 = (timer4 - timer3) / (double)CLOCKS_PER_SEC;
+        std::cout << "| Time for one object : " << time2 << std::endl;
+    }
+    timer2 = clock();
+    l1->To_String();
+    double time2 = (timer2 - timer1) / (double)CLOCKS_PER_SEC;
+    std::cout << "| Full time : " << time2 << " |\n";
+    l1->Clear();
     delete l1;
     return 0;
 }
