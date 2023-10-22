@@ -20,7 +20,7 @@ template <class T>
 class Node
 {
 public:
-    T value;
+    T* value;
     Node<T>* prev{ nullptr };
     Node<T>* next{ nullptr };
 };
@@ -44,11 +44,11 @@ public:
             return (nullptr);
         }
         Node<T>* Tail2 = this->Tail;
-        T* object = &Tail2->value;
+        T* object = Tail2->value;
         for (int i = 0; i < index; ++i)
         {
             Tail2 = Tail2->next;
-            object = &Tail2->value;
+            object = Tail2->value;
         }
         Tail2 = nullptr;
         delete Tail2;
@@ -83,7 +83,7 @@ void linked_list<T>::add_end(T* obj)
         node->next = nullptr;
         this->Head = node;
     }
-    node->value = *obj;
+    node->value = obj;
 }
 
 template<class T>
@@ -105,7 +105,7 @@ void linked_list<T>::add_beg(T* obj)
         node->prev = nullptr;
         this->Tail = node;
     }
-    node->value = *obj;
+    node->value = obj;
 }
 
 template<class T>
@@ -114,14 +114,18 @@ void linked_list<T>::delete_end()
     --this->Size;
     if (this->Size == 0)
     {
-        delete& this->Head->value;
+        delete this->Head->value;
+        this->Head->value = nullptr;
+        delete this->Head;
         this->Tail = this->Head = nullptr;
     }
     else
     {
         this->Head = this->Head->prev;
         this->Head->next->prev = nullptr;
-        delete& this->Head->next->value;
+        delete this->Head->next->value;
+        this->Head->next->value = nullptr;
+        delete this->Head->next;
         this->Head->next = nullptr;
     }
 }
@@ -132,14 +136,18 @@ void linked_list<T>::delete_beg()
     --this->Size;
     if (this->Size == 0)
     {
-        delete& this->Head->value;
+        delete this->Tail->value;
+        this->Tail->value = nullptr;
+        delete this->Tail;
         this->Tail = this->Head = nullptr;
     }
     else
     {
         this->Tail = this->Tail->next;
         this->Tail->prev->next = nullptr;
-        delete& this->Tail->prev->value;
+        delete this->Tail->prev->value;
+        this->Tail->prev->value = nullptr;
+        delete this->Tail->prev;
         this->Tail->prev = nullptr;
     }
 }
@@ -147,8 +155,7 @@ void linked_list<T>::delete_beg()
 template<class T>
 void linked_list<T>::Get(Obj* obj)
 {
-    if (obj == nullptr) {}
-    else
+    if (obj != nullptr)
     {
         std::string str = "| Num : ";
         str += std::to_string(obj->num) + " | Text : " + obj->text + " |\n";
@@ -170,64 +177,71 @@ void linked_list<T>::Change(Obj* obj, Obj* obj2)
 template<class T>
 bool linked_list<T>::Compare(Obj* obj1, Obj* obj2)
 {
-    return (obj1->num == obj2->num && obj1->text == obj2->text) ? true : false;
+    if (obj1 != nullptr && obj2 != nullptr)
+        return (obj1->num == obj2->num && obj1->text == obj2->text) ? true : false;
 }
 
 template<class T>
 bool linked_list<T>::Search(Obj* obj)
 {
-    for (int index = 0; index < this->Size; ++index)
+    if (obj != nullptr)
     {
-        if (Compare((*this)[index], obj))
+        for (int index = 0; index < this->Size; ++index)
         {
-            std::cout << (*this)[index] << std::endl;
-            return true;
+            if (Compare((*this)[index], obj))
+            {
+                std::cout << (*this)[index] << std::endl;
+                return true;
+            }
         }
+        std::cout << "Object was not founded\n";
+        return false;
     }
-    std::cout << "Object was not founded\n";
-    return false;
 }
 
 template<class T>
 bool linked_list<T>::Search_and_delete(Obj* obj)
 {
-    Node<T>* Tail2 = this->Tail;
-    for (int index = 0; index < this->Size; ++index, Tail2 = Tail2->next)
+    if (obj != nullptr)
     {
-        if (Compare((*this)[index], obj))
+        Node<T>* Tail2 = this->Tail;
+        for (int index = 0; index < this->Size; ++index, Tail2 = Tail2->next)
         {
-            if (this->Size != 1 && index != 0 && index != this->Size-1)
+            if (Compare((*this)[index], obj))
             {
-                Tail2->prev->next = Tail2->next;
-                Tail2->next->prev = Tail2->prev;
-                Tail2->prev = Tail2->next = nullptr;
+                if (this->Size != 1 && index != 0 && index != this->Size - 1)
+                {
+                    Tail2->prev->next = Tail2->next;
+                    Tail2->next->prev = Tail2->prev;
+                    Tail2->prev = Tail2->next = nullptr;
+                }
+                else if (this->Size != 1 && index == 0)
+                {
+                    this->Tail = this->Tail->next;
+                    Tail2->next->prev = nullptr;
+                    Tail2->next = nullptr;
+                }
+                else if (this->Size != 1 && index == this->Size - 1)
+                {
+                    this->Head = this->Head->prev;
+                    Tail2->prev->next = nullptr;
+                    Tail2->prev = nullptr;
+                }
+                else
+                {
+                    delete Tail;
+                    this->Tail = this->Head = nullptr;
+                }
+                delete Tail2;
+                Tail2 = nullptr;
+                --this->Size;
+                return true;
             }
-            else if (this->Size != 1 && index == 0)
-            {
-                this->Tail = this->Tail->next;
-                Tail2->next->prev = nullptr;
-                Tail2->next = nullptr;
-            }
-            else if (this->Size != 1 && index == this->Size - 1)
-            {
-                this->Head = this->Head->prev;
-                Tail2->prev->next = nullptr;
-                Tail2->prev = nullptr;
-            }
-            else
-            {
-                delete Tail;
-                this->Tail = this->Head = nullptr;
-            }
-            delete Tail2;
-            Tail2 = nullptr;
-            --this->Size;
-            return true;
         }
+        Tail2 = nullptr;
+        delete Tail2;
+        return false;
     }
-    Tail2 = nullptr;
-    delete Tail2;
-    return false;
 }
 
 template<class T>
@@ -247,6 +261,7 @@ void linked_list<T>::Add_Position(Obj* obj, int index)
             node->prev = Tail2;
             node->next = Tail2->next;
             Tail2->next->prev = node;
+            Tail2->next = node;
         }
         else if (index == this->Size)
         {
@@ -262,7 +277,7 @@ void linked_list<T>::Add_Position(Obj* obj, int index)
             this->Tail->prev = node;
             this->Tail = node;
         }
-        node->value = *obj;
+        node->value = obj;
         ++this->Size;
         Tail2 = nullptr;
         delete Tail2;
@@ -275,9 +290,13 @@ void linked_list<T>::Clear()
     while (this->Tail != this->Head)
     {
         this->Tail = this->Tail->next;
+        delete this->Tail->prev->value;
+        this->Tail->prev->value = nullptr;
         delete this->Tail->prev;
         this->Tail->prev = nullptr;
     }
+    delete this->Tail->value;
+    this->Tail->value = nullptr;
     delete this->Tail;
     this->Tail = this->Head = nullptr;
     this->Size = NULL;
@@ -292,8 +311,8 @@ void linked_list<T>::To_String()
     Node<T>* Tail2 = this->Tail;
     while (Tail2 != nullptr)
     {
-        Obj* obj = static_cast<T*>(&Tail2->value);
-        std::cout<<"\t| Object "<<i++<<" | Address of object : "<<Tail2<<" | Previous : "<<Tail2->prev<<" | Next : "<<Tail2->next<<" | (Value) Num : "<<obj->num<<" | (Value) Text : "<<obj->text<<" |\n";
+        Obj* obj = Tail2->value;
+        std::cout<<"\t| Object "<<i++<< "| Address of node : "<<Tail2<<" | Address of object : "<<Tail2->value<<" | Previous : "<<Tail2->prev<<" | Next : "<<Tail2->next<<" | (Value) Num : "<<obj->num<<" | (Value) Text : "<<obj->text<<" |\n";
         Tail2 = Tail2->next;
         obj = nullptr;
         delete obj;
@@ -307,9 +326,8 @@ int main()
     int Num{ 0 };
     std::string Text;
     linked_list<Obj>* l1 = new linked_list<Obj>();
-    const int n1 = 10;
     clock_t timer1 = clock();
-    for (int i = 0; i < n1; ++i)
+    for (int i = 0; i < 10; ++i)
     {
         std::cout << "Give data for object\nNum : ";
         std::cin >> Num;
@@ -326,9 +344,8 @@ int main()
     l1->To_String();
     double time1 = (timer2 - timer1) / (double)CLOCKS_PER_SEC;
     std::cout << "| Full time : " << time1 << " |\n";
-    const int n2 = 5;
     timer1 = clock();
-    for (int j = 0; j < n2; ++j)
+    for (int j = 0; j < 5; ++j)
     {
         std::cout << "Give random data to find object by your data\nNum : ";
         std::cin >> Num;
