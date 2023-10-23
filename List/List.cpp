@@ -29,6 +29,8 @@ template <class T>
 class linked_list
 {
 public:
+    linked_list() = default;
+    ~linked_list();
     Node<T>* Tail;
     Node<T>* Head;
     int Size;
@@ -85,6 +87,9 @@ void linked_list<T>::add_end(T* obj)
     }
     node->value = obj;
 }
+
+template<class T>
+linked_list<T>::~linked_list(){}
 
 template<class T>
 void linked_list<T>::add_beg(T* obj)
@@ -202,7 +207,7 @@ bool linked_list<T>::Search(Obj* obj)
 template<class T>
 bool linked_list<T>::Search_and_delete(Obj* obj)
 {
-    if (obj != nullptr)
+    if (obj != nullptr && this->Size != 0)
     {
         Node<T>* Tail2 = this->Tail;
         for (int index = 0; index < this->Size; ++index, Tail2 = Tail2->next)
@@ -228,10 +233,7 @@ bool linked_list<T>::Search_and_delete(Obj* obj)
                     Tail2->prev = nullptr;
                 }
                 else
-                {
-                    delete Tail;
                     this->Tail = this->Head = nullptr;
-                }
                 delete Tail2;
                 Tail2 = nullptr;
                 --this->Size;
@@ -287,19 +289,22 @@ void linked_list<T>::Add_Position(Obj* obj, int index)
 template<class T>
 void linked_list<T>::Clear()
 {
-    while (this->Tail != this->Head)
+    if (this->Size != 0)
     {
-        this->Tail = this->Tail->next;
-        delete this->Tail->prev->value;
-        this->Tail->prev->value = nullptr;
-        delete this->Tail->prev;
-        this->Tail->prev = nullptr;
+        while (this->Tail != this->Head)
+        {
+            this->Tail = this->Tail->next;
+            delete this->Tail->prev->value;
+            this->Tail->prev->value = nullptr;
+            delete this->Tail->prev;
+            this->Tail->prev = nullptr;
+        }
+        delete this->Tail->value;
+        this->Tail->value = nullptr;
+        delete this->Tail;
+        this->Tail = this->Head = nullptr;
+        this->Size = NULL;
     }
-    delete this->Tail->value;
-    this->Tail->value = nullptr;
-    delete this->Tail;
-    this->Tail = this->Head = nullptr;
-    this->Size = NULL;
 }
 
 template<class T>
@@ -326,44 +331,42 @@ int main()
     int Num{ 0 };
     std::string Text;
     linked_list<Obj>* l1 = new linked_list<Obj>();
-    clock_t timer1 = clock();
-    for (int i = 0; i < 10; ++i)
+    for (int i = 1; i < 6; ++i)
     {
-        std::cout << "Give data for object\nNum : ";
-        std::cin >> Num;
-        std::cout << "Text : ";
-        std::cin >> Text;
-        Obj* obj = new Obj(Num, Text);
-        clock_t timer3 = clock();
-        l1->add_end(obj);
-        clock_t timer4 = clock();
-        double time1 = (timer4 - timer3) / (double)CLOCKS_PER_SEC;
-        std::cout << "| Time for one object : " << time1 << std::endl;
+        clock_t timer1 = clock();
+        for (int i2 = 0; i2 < pow(10,i); ++i2)
+        {
+            Num = rand() % 100;
+            Text = "#" + std::to_string(Num);
+            Obj* obj = new Obj(Num, Text);
+            clock_t timer3 = clock();
+            l1->add_end(obj);
+            clock_t timer4 = clock();
+            double time1 = (timer4 - timer3) / (double)CLOCKS_PER_SEC;
+            std::cout << "| Time for one object : " << time1 << std::endl;
+        }
+        clock_t timer2 = clock();
+        l1->To_String();
+        double time1 = (timer2 - timer1) / (double)CLOCKS_PER_SEC;
+        std::cout << "| Full time : " << time1 << " |\n";
+        timer1 = clock();
+        for (int i3 = 0; i3 < pow(10,4) ; ++i3)
+        {
+            Num = rand() % 100;
+            Text = "#" + std::to_string(Num);
+            Obj* obj = new Obj(Num, Text);
+            clock_t timer3 = clock();
+            l1->Search_and_delete(obj);
+            clock_t timer4 = clock();
+            delete obj;
+            double time2 = (timer4 - timer3) / (double)CLOCKS_PER_SEC;
+            std::cout << "| Time for one object : " << time2 << std::endl;
+        }
+        timer2 = clock();
+        l1->To_String();
+        std::cout << "| Full time : " << (timer2 - timer1) / (double)CLOCKS_PER_SEC << " |\n";
+        l1->Clear();
     }
-    clock_t timer2 = clock();
-    l1->To_String();
-    double time1 = (timer2 - timer1) / (double)CLOCKS_PER_SEC;
-    std::cout << "| Full time : " << time1 << " |\n";
-    timer1 = clock();
-    for (int j = 0; j < 5; ++j)
-    {
-        std::cout << "Give random data to find object by your data\nNum : ";
-        std::cin >> Num;
-        std::cout << "Text : ";
-        std::cin >> Text;
-        Obj* obj = new Obj(Num, Text);
-        clock_t timer3 = clock();
-        l1->Search_and_delete(obj);
-        clock_t timer4 = clock();
-        delete obj;
-        double time2 = (timer4 - timer3) / (double)CLOCKS_PER_SEC;
-        std::cout << "| Time for one object : " << time2 << std::endl;
-    }
-    timer2 = clock();
-    l1->To_String();
-    double time2 = (timer2 - timer1) / (double)CLOCKS_PER_SEC;
-    std::cout << "| Full time : " << time2 << " |\n";
-    l1->Clear();
     delete l1;
     return 0;
 }
