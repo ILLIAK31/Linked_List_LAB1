@@ -328,11 +328,12 @@ void linked_list<T>::To_String()
 
 int main()
 {
-    int Num{ 0 };
+    int Num{ 0 }, size{ 0 };
     std::string Text;
     linked_list<Obj>* l1 = new linked_list<Obj>();
-    for (int i = 1; i < 6; ++i)
+    for (int i = 1; i < 5; ++i)
     {
+        double average_per_obj{ 0 };
         clock_t timer1 = clock();
         for (int i2 = 0; i2 < pow(10,i); ++i2)
         {
@@ -342,13 +343,17 @@ int main()
             clock_t timer3 = clock();
             l1->add_end(obj);
             clock_t timer4 = clock();
-            double time1 = (timer4 - timer3) / (double)CLOCKS_PER_SEC;
-            std::cout << "| Time for one object : " << time1 << std::endl;
+            //double time1 = (timer4 - timer3) / (double)CLOCKS_PER_SEC;
+            //std::cout << "| Time for one object : " << time1 << std::endl;
+            ++size;
+            average_per_obj += (timer4 - timer3) / (double)CLOCKS_PER_SEC;
         }
         clock_t timer2 = clock();
         l1->To_String();
-        double time1 = (timer2 - timer1) / (double)CLOCKS_PER_SEC;
-        std::cout << "| Full time : " << time1 << " |\n";
+        average_per_obj /= size;
+        average_per_obj *= 1000;
+        std::cout << "| Full time : " << ((timer2 - timer1) / (double)CLOCKS_PER_SEC) << " s |\n" << "| Average per one object : " << average_per_obj << " ms |\n";
+        average_per_obj = size = 0;
         timer1 = clock();
         for (int i3 = 0; i3 < pow(10,4) ; ++i3)
         {
@@ -359,12 +364,16 @@ int main()
             l1->Search_and_delete(obj);
             clock_t timer4 = clock();
             delete obj;
-            double time2 = (timer4 - timer3) / (double)CLOCKS_PER_SEC;
-            std::cout << "| Time for one object : " << time2 << std::endl;
+            average_per_obj += (timer4 - timer3) / (double)CLOCKS_PER_SEC;
+            ++size;
+            //double time2 = (timer4 - timer3) / (double)CLOCKS_PER_SEC;
+            //std::cout << "| Time for one object : " << time2 << std::endl;
         }
         timer2 = clock();
         l1->To_String();
-        std::cout << "| Full time : " << (timer2 - timer1) / (double)CLOCKS_PER_SEC << " |\n";
+        average_per_obj /= size;
+        average_per_obj *= 1000;
+        std::cout << "| Full time : " << ((timer2 - timer1) / (double)CLOCKS_PER_SEC) << " s |\n" << "| Average per object : " << average_per_obj << " ms |\n";
         l1->Clear();
     }
     delete l1;
