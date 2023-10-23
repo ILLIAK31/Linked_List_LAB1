@@ -58,7 +58,7 @@ public:
     }
     void Get(Obj* obj);
     void Change(Obj* obj, Obj* obj2);
-    bool Search(Obj* obj);
+    T* Search(Obj* obj);
     bool Compare(Obj* obj1, Obj* obj2);
     bool Search_and_delete(Obj* obj);
     void Add_Position(Obj* obj, int index);
@@ -187,7 +187,7 @@ bool linked_list<T>::Compare(Obj* obj1, Obj* obj2)
 }
 
 template<class T>
-bool linked_list<T>::Search(Obj* obj)
+T* linked_list<T>::Search(Obj* obj)
 {
     if (obj != nullptr)
     {
@@ -195,12 +195,12 @@ bool linked_list<T>::Search(Obj* obj)
         {
             if (Compare((*this)[index], obj))
             {
-                std::cout << (*this)[index] << std::endl;
-                return true;
+                std::cout << "Index : " << index << std::endl;
+                return (*this)[index];
             }
         }
         std::cout << "Object was not founded\n";
-        return false;
+        return nullptr;
     }
 }
 
